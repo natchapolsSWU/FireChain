@@ -155,8 +155,8 @@ fun SettingsDialog(
     onDismiss: () -> Unit,
     onConfirm: (Int, Int) -> Unit
 ) {
-    var chambers by remember { mutableStateOf(currentChambers.toFloat()) }
-    var bullets by remember { mutableStateOf(currentBullets.toFloat()) }
+    var chambers by remember { mutableStateOf(currentChambers.toString()) }
+    var bullets by remember { mutableStateOf(currentBullets.toString()) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -164,31 +164,41 @@ fun SettingsDialog(
         title = { Text("GAME SETTINGS", color = Gold, fontWeight = FontWeight.Bold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Column {
-                    Text("Chambers: ${chambers.toInt()}", color = Color.White)
-                    Slider(
-                        value = chambers,
-                        onValueChange = { chambers = it },
-                        valueRange = 2f..12f,
-                        steps = 10,
-                        colors = SliderDefaults.colors(thumbColor = Gold, activeTrackColor = Gold)
-                    )
-                }
-                Column {
-                    Text("Bullets: ${bullets.toInt()}", color = Color.White)
-                    Slider(
-                        value = bullets,
-                        onValueChange = { bullets = it },
-                        valueRange = 1f..(chambers - 1),
-                        steps = (chambers - 2).toInt().coerceAtLeast(0),
-                        colors = SliderDefaults.colors(thumbColor = CrimsonRed, activeTrackColor = CrimsonRed)
-                    )
-                }
+                // Chambers Input
+                OutlinedTextField(
+                    value = chambers,
+                    onValueChange = { if (it.length <= 2) chambers = it.filter { c -> c.isDigit() } },
+                    label = { Text("Total Slots", color = Gold) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Gold,
+                        unfocusedBorderColor = Color.Gray,
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                // Bullets Input
+                OutlinedTextField(
+                    value = bullets,
+                    onValueChange = { if (it.length <= 2) bullets = it.filter { c -> c.isDigit() } },
+                    label = { Text("Bullets (Grouped)", color = Gold) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = CrimsonRed,
+                        unfocusedBorderColor = Color.Gray,
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         },
         confirmButton = {
             Button(
-                onClick = { onConfirm(chambers.toInt(), bullets.toInt()) },
+                onClick = { 
+                    val c = chambers.toIntOrNull() ?: 6
+                    val b = bullets.toIntOrNull() ?: 1
+                    onConfirm(c.coerceIn(2, 20), b.coerceIn(1, c - 1)) 
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = Gold, contentColor = Black)
             ) {
                 Text("APPLY")

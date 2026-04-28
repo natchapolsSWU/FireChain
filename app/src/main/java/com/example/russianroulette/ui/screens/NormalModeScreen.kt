@@ -46,10 +46,11 @@ fun NormalModeScreen(
             Text(
                 "NORMAL MODE",
                 color = Gold,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Black
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Black,
+                maxLines = 1
             )
-            GameButton(text = "Settings", onClick = { showSettings = true })
+            GameButton(text = "Reset", onClick = { showSettings = true })
         }
 
         // Status Text

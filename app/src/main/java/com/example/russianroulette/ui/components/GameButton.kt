@@ -35,15 +35,17 @@ fun GameButton(
             .background(backgroundColor)
             .border(2.dp, borderColor, RoundedCornerShape(12.dp))
             .clickable(enabled = enabled) { onClick() }
-            .padding(horizontal = 24.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text.uppercase(),
             color = contentColor,
-            fontSize = 18.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            letterSpacing = 2.sp
+            letterSpacing = 1.sp,
+            maxLines = 1,
+            softWrap = false
         )
     }
 }

@@ -32,7 +32,7 @@ fun HomeScreen(
     ) {
         // Title
         Text(
-            text = "FIRECHAIN",
+            text = "FireChain",
             color = Gold,
             fontSize = 48.sp,
             fontWeight = FontWeight.Black,

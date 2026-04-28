@@ -75,12 +75,16 @@ class PartyModeViewModel : ViewModel() {
         val state = _uiState.value
         if (state.isGameOver || state.isShootingSequence || state.hasSpunThisTurn) return
         
-        engine.rotate(direction)
+        val steps = kotlin.random.Random.nextInt(1, 4) // 1, 2, or 3
+        repeat(steps) {
+            engine.rotate(direction)
+        }
+        
         _uiState.update { 
             it.copy(
-                rotation = it.rotation + (direction * (360f / it.chambers)),
+                rotation = it.rotation + (steps * direction * (360f / it.chambers)),
                 hasSpunThisTurn = true,
-                gameMessage = "Cylinder Rotated"
+                gameMessage = "หมุนไป $steps ช่อง"
             ) 
         }
     }

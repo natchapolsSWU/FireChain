@@ -93,7 +93,7 @@ fun NormalModeScreen(
             )
 
             CylinderView(
-                modifier = Modifier.size(280.dp),
+                modifier = Modifier.size(240.dp),
                 chamberCount = state.chambers,
                 currentRotation = state.rotation
             )

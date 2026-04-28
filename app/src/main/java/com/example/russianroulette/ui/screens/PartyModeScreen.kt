@@ -92,9 +92,15 @@ fun PartyModeScreen(
 
         // Pending Shots / Status
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            val msgUpper = state.gameMessage.uppercase()
+            val messageColor = when {
+                msgUpper.contains("BOOM") || msgUpper.contains("SPENT") -> CrimsonRed
+                msgUpper.contains("SURVIVE") || msgUpper.contains("SAFE") -> Color.Green
+                else -> Gold
+            }
             Text(
                 state.gameMessage,
-                color = if (state.gameMessage.contains("BOOM")) CrimsonRed else Gold,
+                color = messageColor,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -196,24 +202,22 @@ fun PartyModeScreen(
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                         Text("INDEX 0 IS NEXT", color = Gold, fontSize = 10.sp)
+
+                        LaunchedEffect(Unit) {
+                            kotlinx.coroutines.delay(2000)
+                            viewModel.onPeekDismissed()
+                        }
                     } else {
                         // Reveal Button
-                        Box(
+                        Button(
+                            onClick = { viewModel.setPeekingInPopup(true) },
                             modifier = Modifier
                                 .height(60.dp)
-                                .fillMaxWidth()
-                                .clip(androidx.compose.foundation.shape.RoundedCornerShape(8.dp))
-                                .background(DarkGold)
-                                .pointerInteropFilter {
-                                    when (it.action) {
-                                        MotionEvent.ACTION_DOWN -> { viewModel.setPeekingInPopup(true); true }
-                                        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> { viewModel.setPeekingInPopup(false); true }
-                                        else -> false
-                                    }
-                                },
-                            contentAlignment = Alignment.Center
+                                .fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = DarkGold, contentColor = Black),
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
                         ) {
-                            Text("HOLD TO REVEAL", color = Black, fontWeight = FontWeight.Bold)
+                            Text("CLICK TO PEEK", fontWeight = FontWeight.Bold)
                         }
                     }
                 }

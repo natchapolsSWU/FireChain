@@ -1,90 +1,59 @@
-# FireChain - Russian Roulette Game
+# FIreChain 🔫⛓️
 
-🎲 **โปรเจกต์ส่งงานมหาลัย** - เกม Russian Roulette บน Android
-
-## วิธีเล่น
-
-### Normal Mode
-- สปินกระบอก → จูงเรียวบาร์เรล
-- หลีกไป = ยังมีชีวิต ✓
-- โดนกระสุน = GAME OVER ✗
-
-### Party Mode (สนุกกว่า!)
-- หลายผู้เล่นเล่นกันเองแบบ turn by turn
-- มี **กลยุทธ์เพิ่มเติม**:
-  - **Peek** = ดูกระสุนแต่มีค่าบาป (penalty)
-  - **Pass** = ข่มขู่คนต่อไป เพิ่ม cumulative shots
-  - **Skip** = โหลดกระสุนเพิ่ม (รักษาชีวิตครั้งนี้)
-
-## โครงสร้าง
-
-```
-📦 FireChain
-├── 📱 UI Layer (Jetpack Compose)
-│   ├── HomeScreen → เลือกโหมด
-│   ├── NormalModeScreen → เล่นเดี่ยว
-│   └── PartyModeScreen → เล่นเป็นกลุ่ม
-│
-├── 🧠 ViewModel Layer
-│   ├── NormalModeViewModel → จัดการ state สำหรับ Normal Mode
-│   └── PartyModeViewModel → จัดการเกม multiplayer
-│
-├── 🎰 Game Logic
-│   └── RussianRouletteEngine → เหน physicalว game engine
-│       - reset() → สุ่มกระสุนในกระบอก
-│       - rotate() → เปลี่ยนตำแหน่งกระบอก
-│       - fire() → จูงเรียว (ตรวจว่าโดนกระสุนหรือเปล่า)
-│
-└── 🎨 UI Components
-    ├── CylinderView → วาดกระบอก 6 ช่องแบบ 3D
-    └── GameButton/ActionButton → ปุ่มหลักๆ
-```
-
-## Technology Stack
-
-| Layer | Tool |
-|-------|------|
-| Frontend | **Jetpack Compose** + Material3 |
-| Backend | **Kotlin** + Coroutines (Flow) |
-| State Management | **ViewModel** + StateFlow |
-| Build | **Gradle** (Kotlin DSL) |
-| Target | Android 24+ |
-
-## Key Libraries (จาก build.gradle.kts)
-
-```kotlin
-// UI
-androidx.compose:compose-bom
-androidx.compose.material3
-androidx.compose.ui
-
-// Lifecycle
-androidx.lifecycle:lifecycle-viewmodel-compose
-androidx.lifecycle:lifecycle-runtime-ktx
-
-// Core
-androidx.core:core-ktx
-androidx.activity:activity-compose
-```
-
-## Installation & Run
-
-```bash
-# Clone
-git clone https://github.com/natchapolsSWU/FireChain.git
-cd FireChain
-
-# Build & Run
-./gradlew assembleDebug
-# หรือเปิด Android Studio → Run
-```
-
-## คณะผู้จัดทำ
-
-- **Project**: FireChain (Russian Roulette Game)
-- **Language**: Kotlin (28.7%) + HTML (71.3% - layout/resources)
-- **University**: Srinakharinwirot University (SWU)
+**FIreChain** เป็นเกมแนว Russian Roulette ที่เน้นกลยุทธ์ การบลัฟ (Bluffing) และดวง ผสมผสานเข้ากับระบบการยิงต่อเนื่องแบบลูกโซ่ (Chain Reaction) พัฒนาขึ้นสำหรับเล่นร่วมกันกับเพื่อนในเครื่องเดียว (Local Multiplayer)
 
 ---
 
-**Note**: นี่คือเกมจำลองเพื่อการศึกษาเท่านั้น 🎓
+## 🎮 โหมดการเล่น (Game Modes)
+
+### 1. Normal Mode (โหมดมาตรฐาน)
+โหมดดั้งเดิมที่เน้นความตื่นเต้นแบบคลาสสิก
+- **Customization:** ตั้งค่าจำนวนกระสุนและช่องรังเพลิงได้อิสระ
+- **Randomize Spin:** เมื่อกดหมุน (Spin) รังเพลิงจะถูกสุ่มตำแหน่งใหม่ทั้งหมด (Shuffle)
+- **Reset Button:** เปลี่ยนปุ่ม Setting เป็นปุ่ม **Reset** เพื่อเริ่มกระดานใหม่ได้ทันที
+
+### 2. Party Mode (โหมดปาร์ตี้ - FIreChain)
+โหมดหลักของเกมที่ต้องใช้ทั้งกลยุทธ์และการหลอกล่อ
+- **Players:** รองรับผู้เล่น 2-6 คน
+- **Bullet Logic:** กระสุนจะถูกบรรจุแบบติดกันเป็นกลุ่มเสมอ (เช่น 1 1 0 0 0) เพื่อให้สามารถคำนวณตำแหน่งได้
+- **Skip & Chain Fire:** - ผู้เล่นสามารถเลือก "ข้าม" (Pass) เพื่อสะสมจำนวนนัด (Skip Count) ไปให้คนถัดไป
+    - หากเลือก "ยิง" (Shoot) จะต้องกดยิงเองทีละนัด (Manual Trigger) เริ่มจากตัวเอง และยิงย้อนกลับ (Reverse) ไปหาคนก่อนหน้าตามจำนวน Skip Count
+- **Peek System (การแอบดู):**
+    - เมื่อกดข้าม มีโอกาส **1 ใน 3** ที่จะได้รับสิทธิ์แอบดูตำแหน่งกระสุน
+    - หากได้รับสิทธิ์ จะมี Pop-up พร้อมปุ่ม **"Click to Peek"** โชว์ตำแหน่งกระสุนเพียง **3 วินาที** (ดูได้ครั้งเดียวต่อรอบ)
+    - หากสุ่มไม่ติด ระบบจะเปลี่ยนตาไปคนถัดไปทันทีโดยไม่มีการแจ้งเตือน เพื่อความเนียนในการบลัฟ
+- **Force Fire:** หากข้ามจนวนกลับมาถึงคนแรกที่เริ่มข้ามในรอบนั้น ระบบจะบังคับยิงทันที ห้ามข้าม!
+
+---
+
+## ⚙️ ฟีเจอร์เด่น (Key Features)
+
+- **Randomized Step Spinning:** ปุ่มเลื่อนซ้าย/ขวา จะสุ่มขยับรังเพลิง **1-3 ช่อง** เพิ่มความไม่แน่นอน
+- **Visual Feedback:** - ตัวอักษรสี **เขียว (Green)** เมื่อรอดชีวิต (Survive/Safe)
+    - ตัวอักษรสี **แดง (Red)** เมื่อมีการใช้กระสุน (Bullet Spent)
+- **Pre-game Setup:** สามารถตั้งค่าจำนวนผู้เล่น ช่องรังเพลิง และจำนวนกระสุนได้ใหม่ทุกครั้งหลังจบเกมหรือ Reset
+- **Manual Trigger:** ในโหมดปาร์ตี้ ผู้เล่นต้องเป็นคนกดลั่นไกทีละนัดด้วยตัวเองเพื่อให้ระบบแสดงผลทีละนัด
+
+---
+
+## 🛠 การติดตั้งและพัฒนา (Technical Setup)
+
+โปรเจกต์นี้พัฒนาด้วย **Android Studio** โดยใช้ **Jetpack Compose**
+
+1. Clone repository นี้ลงเครื่อง
+2. เปิดโปรเจกต์ด้วย Android Studio
+3. Build และ Run บน Emulator หรืออุปกรณ์ Android จริง
+
+**โครงสร้างไฟล์สำคัญ:**
+- `MainActivity.kt`: จุดเริ่มต้นของแอปและ Navigation
+- `RussianRouletteEngine.kt`: หัวใจหลักในการคำนวณ Logic รังเพลิงและการยิง
+- `PartyModeViewModel.kt`: จัดการสถานะและลำดับการเล่นในโหมดปาร์ตี้
+
+---
+
+## 📝 กติกาเพิ่มเติม
+- เกมจะเล่นต่อเนื่องไปจนกว่ากระสุนจะหมดรังเพลิง (Party Mode)
+- เมื่อมีคนตายในรอบการยิงต่อเนื่อง ระบบจะ Reset Skip Count และเริ่มนับใหม่ที่ผู้เล่นคนถัดไป
+
+---
+**Warning:** *This app is for entertainment purposes only.*
